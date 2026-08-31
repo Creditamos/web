@@ -1,7 +1,7 @@
-import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import type * as React from "react";
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+import type * as React from "react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 export function DialogPopup({
   className,
@@ -15,5 +15,5 @@ export function DialogPopup({
       )}
       {...props}
     />
-  );
+  )
 }

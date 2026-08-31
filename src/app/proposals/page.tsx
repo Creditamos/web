@@ -1,25 +1,29 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { FetchProposalsQueryResult, useProposals } from "@/features/proposals";
+import { useState } from "react"
+import { type FetchProposalsQueryResult, useProposals } from "@/features/proposals"
 
 const statusLabels: Record<string, string> = {
   PENDING: "Pendente",
   APPROVED: "Aprovado",
   REJECTED: "Rejeitado",
   REVIEW: "Em análise",
-};
+}
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-warning/10 text-warning",
   APPROVED: "bg-success/10 text-success",
   REJECTED: "bg-danger/10 text-danger",
   REVIEW: "bg-primary/10 text-primary",
-};
+}
 
 export default function ProposalsPage() {
-  const [filter, setFilter] = useState<string>("");
-  const { data: proposals, isLoading, error }: FetchProposalsQueryResult = useProposals(filter || undefined);
+  const [filter, setFilter] = useState<string>("")
+  const {
+    data: proposals,
+    isLoading,
+    error,
+  }: FetchProposalsQueryResult = useProposals(filter || undefined)
 
   return (
     <div className="space-y-6">
@@ -110,5 +114,5 @@ export default function ProposalsPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

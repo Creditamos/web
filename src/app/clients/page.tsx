@@ -1,18 +1,16 @@
-"use client";
+"use client"
 
-import { FetchClientsQueryResult, useClients } from "@/features/clients";
+import { type FetchClientsQueryResult, useClients } from "@/features/clients"
 
 export default function ClientsPage() {
-  const { data: clients, isLoading, error }: FetchClientsQueryResult = useClients();
+  const { data: clients, isLoading, error }: FetchClientsQueryResult = useClients()
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
-          <p className="mt-1 text-muted-foreground">
-            Gerencie a sua carteira de clientes.
-          </p>
+          <p className="mt-1 text-muted-foreground">Gerencie a sua carteira de clientes.</p>
         </div>
       </div>
 
@@ -64,10 +62,11 @@ export default function ClientsPage() {
                   <td className="px-4 py-3 text-muted-foreground">{client.phone ?? "--"}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${client.isActive
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        client.isActive
                           ? "bg-success/10 text-success"
                           : "bg-muted text-muted-foreground"
-                        }`}
+                      }`}
                     >
                       {client.isActive ? "Ativo" : "Inativo"}
                     </span>
@@ -79,5 +78,5 @@ export default function ClientsPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

@@ -1,2 +1,2 @@
-export * from "./webhook-payload.interface";
-export * from "./webhook-response.interface";
+export * from "./webhook-payload.interface"
+export * from "./webhook-response.interface"

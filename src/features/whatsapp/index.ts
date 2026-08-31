@@ -1,2 +1,2 @@
-export * from "./interfaces";
-export * from "./queries/fetch-whatsapp-status.query";
+export * from "./interfaces"
+export * from "./queries/fetch-whatsapp-status.query"

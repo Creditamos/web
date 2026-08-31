@@ -1,5 +1,5 @@
 export interface WebhookResponse {
-  success: boolean;
-  message: string;
-  data?: unknown;
+  success: boolean
+  message: string
+  data?: unknown
 }

@@ -1,21 +1,21 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { PlusIcon } from "lucide-react";
-import { useCreateClient } from "@/features/clients";
-import { Button } from "@/components/Button";
-import { Dialog } from "@/components/Dialog";
-import { Input } from "@/components/Input";
-import { Label } from "@/components/Label";
+import { PlusIcon } from "lucide-react"
+import { useState } from "react"
+import { Button } from "@/components/Button"
+import { Dialog } from "@/components/Dialog"
+import { Input } from "@/components/Input"
+import { Label } from "@/components/Label"
+import { useCreateClient } from "@/features/clients"
 
 interface NewClientDialogProps {
-  trigger?: React.ReactNode;
+  trigger?: React.ReactNode
 }
 
 const CLIENT_CATEGORIES = [
   { value: "MASTER_AGENT", label: "Master Agent" },
   { value: "RESELLER", label: "Revendedor (Reseller)" },
-];
+]
 
 const emptyForm = {
   category: "",
@@ -24,48 +24,48 @@ const emptyForm = {
   document_number: "",
   name: "",
   phone: "",
-};
+}
 
 export function NewClientDialog({ trigger }: NewClientDialogProps) {
-  const createClient = useCreateClient();
-  const [open, setOpen] = useState<boolean>(false);
-  const [form, setForm] = useState(emptyForm);
-  const [error, setError] = useState<string | null>(null);
+  const createClient = useCreateClient()
+  const [open, setOpen] = useState<boolean>(false)
+  const [form, setForm] = useState(emptyForm)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleChange: (field: keyof typeof emptyForm, value: string) => void = (field: keyof typeof emptyForm, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleChange: (field: keyof typeof emptyForm, value: string) => void = (
+    field: keyof typeof emptyForm,
+    value: string,
+  ) => {
+    setForm((prev) => ({ ...prev, [field]: value }))
+  }
 
   const reset: VoidFunction = () => {
-    setForm(emptyForm);
-    setError(null);
-  };
+    setForm(emptyForm)
+    setError(null)
+  }
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
+    e.preventDefault()
+    setError(null)
     try {
       await createClient.mutateAsync({
         category: form.category,
-        person_type:
-          form.person_type === "CORPORATE" ? "CORPORATE" : "INDIVIDUAL",
+        person_type: form.person_type === "CORPORATE" ? "CORPORATE" : "INDIVIDUAL",
         document_number: form.document_number,
         name: form.name,
         subcategory: form.subcategory || undefined,
         phone: form.phone || undefined,
-      });
-      reset();
-      setOpen(false);
+      })
+      reset()
+      setOpen(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao criar cliente");
+      setError(err instanceof Error ? err.message : "Falha ao criar cliente")
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger
-        className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-      >
+      <Dialog.Trigger className="inline-flex h-9 items-center gap-1.5 rounded-md bg-primary px-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
         {trigger ?? (
           <>
             <PlusIcon />
@@ -76,9 +76,7 @@ export function NewClientDialog({ trigger }: NewClientDialogProps) {
       <Dialog.Content>
         <Dialog.Header>
           <Dialog.Title>Novo Cliente</Dialog.Title>
-          <Dialog.Description>
-            Crie um novo registro de cliente na carteira.
-          </Dialog.Description>
+          <Dialog.Description>Crie um novo registro de cliente na carteira.</Dialog.Description>
         </Dialog.Header>
 
         <form onSubmit={handleSubmit} className="space-y-4 px-6 pb-6">
@@ -121,7 +119,7 @@ export function NewClientDialog({ trigger }: NewClientDialogProps) {
               <select
                 id="client-type"
                 value={form.person_type}
-                onChange={(e  ) => handleChange("person_type", e.target.value)}
+                onChange={(e) => handleChange("person_type", e.target.value)}
                 className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
               >
                 <option value="INDIVIDUAL">Pessoa Física</option>
@@ -166,22 +164,15 @@ export function NewClientDialog({ trigger }: NewClientDialogProps) {
           )}
 
           <Dialog.Footer>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
-            <Button
-              type="submit"
-              disabled={createClient.isPending}
-            >
+            <Button type="submit" disabled={createClient.isPending}>
               {createClient.isPending ? "Criando..." : "Criar Cliente"}
             </Button>
           </Dialog.Footer>
         </form>
       </Dialog.Content>
     </Dialog>
-  );
+  )
 }

@@ -1,1 +1,1 @@
-export * from "./create-proposal-input.type";
+export * from "./create-proposal-input.type"

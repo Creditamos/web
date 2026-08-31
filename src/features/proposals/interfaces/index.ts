@@ -1,1 +1,1 @@
-export * from "./credit-proposal.interface";
+export * from "./credit-proposal.interface"

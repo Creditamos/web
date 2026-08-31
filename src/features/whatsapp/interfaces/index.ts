@@ -1,1 +1,1 @@
-export * from "./whatsapp-status.interface";
+export * from "./whatsapp-status.interface"

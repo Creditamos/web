@@ -1,38 +1,42 @@
-"use client";
+"use client"
 
-import { UsersIcon, FileTextIcon, CheckCircle2Icon, ClockIcon } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { WhatsappStatusCard } from "@/components/whatsapp-status-card";
-import { NewClientDialog } from "@/components/new-client-dialog";
-import { NewProposalDialog } from "@/components/new-proposal-dialog";
-import { Client, FetchClientsQueryResult, useClients } from "@/features/clients";
-import { CreditProposal, FetchProposalsQueryResult, useProposals } from "@/features/proposals";
-import { JSX } from "react";
+import type { LucideIcon } from "lucide-react"
+import { CheckCircle2Icon, ClockIcon, FileTextIcon, UsersIcon } from "lucide-react"
+import type { JSX } from "react"
+import { NewClientDialog } from "@/components/new-client-dialog"
+import { NewProposalDialog } from "@/components/new-proposal-dialog"
+import { WhatsappStatusCard } from "@/components/whatsapp-status-card"
+import { type Client, type FetchClientsQueryResult, useClients } from "@/features/clients"
+import {
+  type CreditProposal,
+  type FetchProposalsQueryResult,
+  useProposals,
+} from "@/features/proposals"
 
 const currency: Intl.NumberFormat = new Intl.NumberFormat("pt-BR", {
   style: "currency",
   currency: "BRL",
-});
+})
 
 const statusLabels: Record<string, string> = {
   PENDING: "Pendente",
   APPROVED: "Aprovado",
   REJECTED: "Rejeitado",
   REVIEW: "Em análise",
-};
+}
 
 const statusColors: Record<string, string> = {
   PENDING: "bg-warning/10 text-warning",
   APPROVED: "bg-success/10 text-success",
   REJECTED: "bg-danger/10 text-danger",
   REVIEW: "bg-primary/10 text-primary",
-};
+}
 
 interface MetricCardProps {
-  label: string;
-  value: string;
-  icon: LucideIcon;
-  sub?: string;
+  label: string
+  value: string
+  icon: LucideIcon
+  sub?: string
 }
 
 function MetricCard({ label, value, icon: Icon, sub }: MetricCardProps): JSX.Element {
@@ -44,37 +48,33 @@ function MetricCard({ label, value, icon: Icon, sub }: MetricCardProps): JSX.Ele
           <Icon className="size-4" />
         </div>
       </div>
-      <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-        {value}
-      </p>
+      <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">{value}</p>
       {sub && <p className="mt-1 text-xs text-muted-foreground">{sub}</p>}
     </div>
-  );
+  )
 }
 
 export default function DashboardPage(): JSX.Element {
-  const { data: clients, isLoading: clientsLoading }: FetchClientsQueryResult = useClients();
-  const { data: proposals, isLoading: proposalsLoading }: FetchProposalsQueryResult = useProposals();
+  const { data: clients, isLoading: clientsLoading }: FetchClientsQueryResult = useClients()
+  const { data: proposals, isLoading: proposalsLoading }: FetchProposalsQueryResult = useProposals()
 
-  const activeClients: number = clients?.filter((c) => c.isActive).length ?? 0;
-  const approved: CreditProposal[] = proposals?.filter((p) => p.status === "APPROVED") ?? [];
+  const activeClients: number = clients?.filter((c) => c.isActive).length ?? 0
+  const approved: CreditProposal[] = proposals?.filter((p) => p.status === "APPROVED") ?? []
   const approvedLimit: number = approved.reduce(
     (sum: number, p: CreditProposal) => sum + Number(p.requestedAmount),
     0,
-  );
-  const pending: number = proposals?.filter((p) => p.status === "PENDING").length ?? 0;
+  )
+  const pending: number = proposals?.filter((p) => p.status === "PENDING").length ?? 0
 
-  const recentClients: Client[] = clients?.slice(0, 5) ?? [];
-  const recentProposals: CreditProposal[] = proposals?.slice(0, 5) ?? [];
+  const recentClients: Client[] = clients?.slice(0, 5) ?? []
+  const recentProposals: CreditProposal[] = proposals?.slice(0, 5) ?? []
 
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Painel</h1>
-          <p className="mt-1 text-muted-foreground">
-            Visão geral das suas operações de crédito.
-          </p>
+          <p className="mt-1 text-muted-foreground">Visão geral das suas operações de crédito.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <NewClientDialog />
@@ -112,19 +112,16 @@ export default function DashboardPage(): JSX.Element {
       <WhatsappStatusCard />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <RecentProposalsTable
-          proposals={recentProposals}
-          loading={proposalsLoading}
-        />
+        <RecentProposalsTable proposals={recentProposals} loading={proposalsLoading} />
         <RecentClientsTable clients={recentClients} loading={clientsLoading} />
       </div>
     </div>
-  );
+  )
 }
 
 interface RecentProposalsTableProps {
-  proposals: Array<import("@/features/proposals").CreditProposal>;
-  loading: boolean;
+  proposals: Array<import("@/features/proposals").CreditProposal>
+  loading: boolean
 }
 
 function RecentProposalsTable({ proposals, loading }: RecentProposalsTableProps) {
@@ -154,20 +151,16 @@ function RecentProposalsTable({ proposals, loading }: RecentProposalsTableProps)
             </thead>
             <tbody className="divide-y divide-border">
               {proposals.map((p) => (
-                <tr
-                  key={p.id}
-                  className="transition-colors hover:bg-muted/30"
-                >
-                  <td className="px-6 py-3 font-mono text-xs">
-                    {p.id.slice(0, 8)}...
-                  </td>
+                <tr key={p.id} className="transition-colors hover:bg-muted/30">
+                  <td className="px-6 py-3 font-mono text-xs">{p.id.slice(0, 8)}...</td>
                   <td className="px-6 py-3 font-medium">
                     {currency.format(Number(p.requestedAmount))}
                   </td>
                   <td className="px-6 py-3">
                     <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[p.status] ?? "bg-muted text-muted-foreground"
-                        }`}
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        statusColors[p.status] ?? "bg-muted text-muted-foreground"
+                      }`}
                     >
                       {statusLabels[p.status] ?? p.status}
                     </span>
@@ -182,12 +175,12 @@ function RecentProposalsTable({ proposals, loading }: RecentProposalsTableProps)
         </div>
       )}
     </div>
-  );
+  )
 }
 
 interface RecentClientsTableProps {
-  clients: Array<import("@/features/clients").Client>;
-  loading: boolean;
+  clients: Array<import("@/features/clients").Client>
+  loading: boolean
 }
 
 function RecentClientsTable({ clients, loading }: RecentClientsTableProps) {
@@ -217,14 +210,9 @@ function RecentClientsTable({ clients, loading }: RecentClientsTableProps) {
             </thead>
             <tbody className="divide-y divide-border">
               {clients.map((client) => (
-                <tr
-                  key={client.id}
-                  className="transition-colors hover:bg-muted/30"
-                >
+                <tr key={client.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-6 py-3 font-medium">{client.name}</td>
-                  <td className="px-6 py-3 font-mono text-xs">
-                    {client.documentNumber}
-                  </td>
+                  <td className="px-6 py-3 font-mono text-xs">{client.documentNumber}</td>
                   <td className="px-6 py-3">
                     <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                       {client.personType === "CORPORATE" ? "Jurídica" : "Física"}
@@ -232,10 +220,11 @@ function RecentClientsTable({ clients, loading }: RecentClientsTableProps) {
                   </td>
                   <td className="px-6 py-3">
                     <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${client.isActive
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        client.isActive
                           ? "bg-success/10 text-success"
                           : "bg-muted text-muted-foreground"
-                        }`}
+                      }`}
                     >
                       {client.isActive ? "Ativo" : "Inativo"}
                     </span>
@@ -247,5 +236,5 @@ function RecentClientsTable({ clients, loading }: RecentClientsTableProps) {
         </div>
       )}
     </div>
-  );
+  )
 }

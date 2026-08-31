@@ -1,11 +1,11 @@
-import Link from "next/link";
-import Image from "next/image";
+import Image from "next/image"
+import Link from "next/link"
 
 const navLinks = [
   { href: "/", label: "Painel" },
   { href: "/clients", label: "Clientes" },
   { href: "/proposals", label: "Propostas" },
-];
+]
 
 export function Header() {
   return (
@@ -34,5 +34,5 @@ export function Header() {
         </nav>
       </div>
     </header>
-  );
+  )
 }

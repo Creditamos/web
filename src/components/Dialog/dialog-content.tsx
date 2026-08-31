@@ -1,13 +1,12 @@
-import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { XIcon } from "lucide-react";
-import type * as React from "react";
+import type { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+import { XIcon } from "lucide-react"
+import type * as React from "react"
 
-import { cn } from "@/lib/utils";
-
-import { DialogPortal } from "./dialog-portal";
-import { DialogBackdrop } from "./dialog-backdrop";
-import { DialogPopup } from "./dialog-popup";
-import { DialogClose } from "./dialog-close";
+import { cn } from "@/lib/utils"
+import { DialogBackdrop } from "./dialog-backdrop"
+import { DialogClose } from "./dialog-close"
+import { DialogPopup } from "./dialog-popup"
+import { DialogPortal } from "./dialog-portal"
 
 export function DialogContent({
   className,
@@ -28,5 +27,5 @@ export function DialogContent({
         )}
       </DialogPopup>
     </DialogPortal>
-  );
+  )
 }

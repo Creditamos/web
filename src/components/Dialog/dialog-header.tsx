@@ -1,6 +1,6 @@
-import type * as React from "react";
+import type * as React from "react"
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"
 
 export function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -9,5 +9,5 @@ export function DialogHeader({ className, ...props }: React.ComponentProps<"div"
       className={cn("flex flex-col gap-1.5 text-left pt-6 px-6", className)}
       {...props}
     />
-  );
+  )
 }

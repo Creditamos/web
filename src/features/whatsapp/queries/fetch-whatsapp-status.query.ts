@@ -1,14 +1,12 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import type { WhatsappStatus } from "../interfaces";
+import { type UseQueryResult, useQuery } from "@tanstack/react-query"
+import { api } from "@/lib/axios"
+import type { WhatsappStatus } from "../interfaces"
 
 function fetchWhatsappStatus(): Promise<WhatsappStatus> {
-  return api
-    .get<WhatsappStatus>("/whatsapp/status")
-    .then((res) => res.data);
+  return api.get<WhatsappStatus>("/whatsapp/status").then((res) => res.data)
 }
 
-export type FetchWhatsappStatusQueryResult = UseQueryResult<WhatsappStatus, Error>;
+export type FetchWhatsappStatusQueryResult = UseQueryResult<WhatsappStatus, Error>
 
 export function useWhatsappStatus(): FetchWhatsappStatusQueryResult {
   return useQuery({
@@ -16,5 +14,5 @@ export function useWhatsappStatus(): FetchWhatsappStatusQueryResult {
     queryFn: fetchWhatsappStatus,
     refetchInterval: 2000,
     refetchIntervalInBackground: true,
-  });
+  })
 }

@@ -1,1 +1,1 @@
-export * from "./operator.interface";
+export * from "./operator.interface"

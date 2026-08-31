@@ -1,18 +1,18 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { FilePlus2Icon } from "lucide-react";
-import { CreateProposalMutationResult, useCreateProposal } from "@/features/proposals";
-import { useClientByDocument } from "@/features/clients";
-import { useProducts } from "@/features/products";
-import { useOperators } from "@/features/operators";
-import { Button } from "@/components/Button";
-import { Dialog } from "@/components/Dialog";
-import { Input } from "@/components/Input";
-import { Label } from "@/components/Label";
+import { FilePlus2Icon } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Button } from "@/components/Button"
+import { Dialog } from "@/components/Dialog"
+import { Input } from "@/components/Input"
+import { Label } from "@/components/Label"
+import { useClientByDocument } from "@/features/clients"
+import { useOperators } from "@/features/operators"
+import { useProducts } from "@/features/products"
+import { type CreateProposalMutationResult, useCreateProposal } from "@/features/proposals"
 
 interface NewProposalDialogProps {
-  trigger?: React.ReactNode;
+  trigger?: React.ReactNode
 }
 
 const emptyForm = {
@@ -20,53 +20,48 @@ const emptyForm = {
   product_id: "",
   operator_id: "",
   requested_amount: "",
-};
+}
 
-const MIN_CLIENT_DOCUMENT_LENGTH = 11;
-const DOCUMENT_DEBOUNCE_MS = 400;
+const MIN_CLIENT_DOCUMENT_LENGTH = 11
+const DOCUMENT_DEBOUNCE_MS = 400
 
 export function NewProposalDialog({ trigger }: NewProposalDialogProps) {
-  const createProposal: CreateProposalMutationResult = useCreateProposal();
-  const { data: products, isLoading: productsLoading } = useProducts();
-  const { data: operators, isLoading: operatorsLoading } = useOperators();
+  const createProposal: CreateProposalMutationResult = useCreateProposal()
+  const { data: products, isLoading: productsLoading } = useProducts()
+  const { data: operators, isLoading: operatorsLoading } = useOperators()
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [form, setForm] = useState(emptyForm);
-  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState<boolean>(false)
+  const [form, setForm] = useState(emptyForm)
+  const [error, setError] = useState<string | null>(null)
 
-  const normalizedDocument = form.client_document.trim().replace(/\D/g, "");
-  const [debouncedDocument, setDebouncedDocument] = useState<string>("");
+  const normalizedDocument = form.client_document.trim().replace(/\D/g, "")
+  const [debouncedDocument, setDebouncedDocument] = useState<string>("")
 
   useEffect(() => {
-    const timeout = setTimeout(
-      () => setDebouncedDocument(normalizedDocument),
-      DOCUMENT_DEBOUNCE_MS,
-    );
-    return () => clearTimeout(timeout);
-  }, [normalizedDocument]);
+    const timeout = setTimeout(() => setDebouncedDocument(normalizedDocument), DOCUMENT_DEBOUNCE_MS)
+    return () => clearTimeout(timeout)
+  }, [normalizedDocument])
 
   const clientQuery = useClientByDocument(
-    debouncedDocument.length >= MIN_CLIENT_DOCUMENT_LENGTH
-      ? debouncedDocument
-      : "",
-  );
+    debouncedDocument.length >= MIN_CLIENT_DOCUMENT_LENGTH ? debouncedDocument : "",
+  )
 
   const handleChange = (field: keyof typeof emptyForm, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
+    setForm((prev) => ({ ...prev, [field]: value }))
+  }
 
   const reset = () => {
-    setForm(emptyForm);
-    setError(null);
-  };
+    setForm(emptyForm)
+    setError(null)
+  }
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError(null);
-    const amount = Number(form.requested_amount);
+    e.preventDefault()
+    setError(null)
+    const amount = Number(form.requested_amount)
     if (!Number.isFinite(amount) || amount <= 0) {
-      setError("O valor solicitado deve ser maior que 0.");
-      return;
+      setError("O valor solicitado deve ser maior que 0.")
+      return
     }
     try {
       await createProposal.mutateAsync({
@@ -74,15 +69,15 @@ export function NewProposalDialog({ trigger }: NewProposalDialogProps) {
         product_id: form.product_id,
         operator_id: form.operator_id || undefined,
         requested_amount: amount,
-      });
-      reset();
-      setOpen(false);
+      })
+      reset()
+      setOpen(false)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Falha ao criar proposta");
+      setError(err instanceof Error ? err.message : "Falha ao criar proposta")
     }
-  };
+  }
 
-  const lookupActive = debouncedDocument.length >= MIN_CLIENT_DOCUMENT_LENGTH;
+  const lookupActive = debouncedDocument.length >= MIN_CLIENT_DOCUMENT_LENGTH
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -116,9 +111,7 @@ export function NewProposalDialog({ trigger }: NewProposalDialogProps) {
             {clientQuery.isFetching && lookupActive ? (
               <p className="text-xs text-muted-foreground">Buscando cliente...</p>
             ) : clientQuery.data ? (
-              <p className="text-xs font-medium text-success">
-                Cliente: {clientQuery.data.name}
-              </p>
+              <p className="text-xs font-medium text-success">Cliente: {clientQuery.data.name}</p>
             ) : lookupActive && clientQuery.isError ? (
               <p className="text-xs font-medium text-danger">
                 Cliente não encontrado para este CPF.
@@ -145,9 +138,7 @@ export function NewProposalDialog({ trigger }: NewProposalDialogProps) {
                 </option>
               ))}
             </select>
-            <p className="text-xs text-muted-foreground">
-              Produto de crédito a ser solicitado.
-            </p>
+            <p className="text-xs text-muted-foreground">Produto de crédito a ser solicitado.</p>
           </div>
 
           <div className="space-y-1.5">
@@ -191,11 +182,7 @@ export function NewProposalDialog({ trigger }: NewProposalDialogProps) {
           )}
 
           <Dialog.Footer>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={createProposal.isPending}>
@@ -205,5 +192,5 @@ export function NewProposalDialog({ trigger }: NewProposalDialogProps) {
         </form>
       </Dialog.Content>
     </Dialog>
-  );
+  )
 }
