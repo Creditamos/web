@@ -31,8 +31,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
 
   const fetchMe = useCallback(async () => {
     try {
-      const { data } = await api.get<{ admin: AdminInfo }>("/auth/me")
-      setAdmin(data.admin)
+      const { data } = await api.get<AdminInfo>("/auth/me")
+      setAdmin(data)
     } catch {
       setAdmin(null)
     }
