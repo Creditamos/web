@@ -11,24 +11,29 @@ const SAFE_FORWARD: readonly string[] = [
   "x-forwarded-for",
 ] as const
 
-async function proxyHandler(
-  req: NextRequest,
-  ctx: { params: Promise<{ path: string[] }> },
-): Promise<NextResponse> {
+interface ProxyContextParams {
+  path: string[]
+}
+
+interface ProxyContext {
+  params: Promise<ProxyContextParams>
+}
+
+async function proxyHandler(req: NextRequest, ctx: ProxyContext): Promise<NextResponse> {
   const { path } = await ctx.params
-  const pathname = (path ?? []).join("/")
-  const target = `${API_URL}/${pathname}${req.nextUrl.search}`
+  const pathname: string = (path ?? []).join("/")
+  const target: string = `${API_URL}/${pathname}${req.nextUrl.search}`
 
   const headers: Record<string, string> = {}
 
   if (API_KEY) headers["x-api-key"] = API_KEY
 
   for (const header of SAFE_FORWARD) {
-    const value = req.headers.get(header)
+    const value: string | null = req.headers.get(header)
     if (value) headers[header] = value
   }
 
-  const clientIp =
+  const clientIp: string =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
     req.headers.get("x-real-ip") ??
     "127.0.0.1"
@@ -40,13 +45,16 @@ async function proxyHandler(
     ...(req.method !== "GET" && req.method !== "HEAD" ? { body: await req.arrayBuffer() } : {}),
   }
 
-  const upstream = await fetch(target, init)
+  const upstream: Response = await fetch(target, init)
 
-  const responseHeaders = new Headers()
+  const responseHeaders: Headers = new Headers()
+
   const ct = upstream.headers.get("content-type")
+
   if (ct) responseHeaders.set("content-type", ct)
 
-  const setCookies = upstream.headers.getSetCookie?.() ?? []
+  const setCookies: string[] = upstream.headers.getSetCookie?.() ?? []
+
   for (const sc of setCookies) {
     responseHeaders.append("set-cookie", sc)
   }
