@@ -20,7 +20,7 @@ export function DialogContent({
       <DialogPopup className={cn("p-0", className)} {...props}>
         {children}
         {showCloseButton && (
-          <DialogClose className="absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <DialogClose className="hover:cursor-pointer absolute right-4 top-4 inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <XIcon className="size-4" />
             <span className="sr-only">Fechar</span>
           </DialogClose>

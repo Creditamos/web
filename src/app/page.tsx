@@ -3,10 +3,10 @@
 import type { LucideIcon } from "lucide-react"
 import { CheckCircle2Icon, ClockIcon, FileTextIcon, UsersIcon } from "lucide-react"
 import type { JSX } from "react"
-import { NewClientDialog } from "@/components/new-client-dialog"
-import { NewProposalDialog } from "@/components/new-proposal-dialog"
 import { WhatsappStatusCard } from "@/components/whatsapp-status-card"
-import { type Client, type FetchClientsQueryResult, useClients } from "@/features/clients"
+import { NewClientDialog } from "@/dialogs/new-client"
+import { NewProposalDialog } from "@/dialogs/new-proposal"
+import { type FetchClientsQueryResult, useClients } from "@/features/clients"
 import {
   type CreditProposal,
   type FetchProposalsQueryResult,
@@ -66,7 +66,6 @@ export default function DashboardPage(): JSX.Element {
   )
   const pending: number = proposals?.filter((p) => p.status === "PENDING").length ?? 0
 
-  const recentClients: Client[] = clients?.slice(0, 5) ?? []
   const recentProposals: CreditProposal[] = proposals?.slice(0, 5) ?? []
 
   return (
@@ -113,7 +112,6 @@ export default function DashboardPage(): JSX.Element {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <RecentProposalsTable proposals={recentProposals} loading={proposalsLoading} />
-        <RecentClientsTable clients={recentClients} loading={clientsLoading} />
       </div>
     </div>
   )
@@ -167,67 +165,6 @@ function RecentProposalsTable({ proposals, loading }: RecentProposalsTableProps)
                   </td>
                   <td className="px-6 py-3 text-muted-foreground">
                     {new Date(p.createdAt).toLocaleDateString("pt-BR")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  )
-}
-
-interface RecentClientsTableProps {
-  clients: Array<import("@/features/clients").Client>
-  loading: boolean
-}
-
-function RecentClientsTable({ clients, loading }: RecentClientsTableProps) {
-  return (
-    <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm dark:bg-secondary">
-      <div className="border-b border-border px-6 py-4">
-        <h2 className="text-lg font-semibold">Clientes Recentes</h2>
-      </div>
-      {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-        </div>
-      ) : clients.length === 0 ? (
-        <div className="flex items-center justify-center rounded-none border-0 py-14 text-sm text-muted-foreground">
-          Nenhum cliente ainda.
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-border bg-muted/50">
-              <tr>
-                <th className="px-6 py-3 font-medium">Nome</th>
-                <th className="px-6 py-3 font-medium">Documento</th>
-                <th className="px-6 py-3 font-medium">Tipo</th>
-                <th className="px-6 py-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {clients.map((client) => (
-                <tr key={client.id} className="transition-colors hover:bg-muted/30">
-                  <td className="px-6 py-3 font-medium">{client.name}</td>
-                  <td className="px-6 py-3 font-mono text-xs">{client.documentNumber}</td>
-                  <td className="px-6 py-3">
-                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                      {client.personType === "CORPORATE" ? "Jurídica" : "Física"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-3">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        client.isActive
-                          ? "bg-success/10 text-success"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {client.isActive ? "Ativo" : "Inativo"}
-                    </span>
                   </td>
                 </tr>
               ))}

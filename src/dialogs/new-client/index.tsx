@@ -2,40 +2,79 @@
 
 import { PlusIcon } from "lucide-react"
 import { useState } from "react"
-import { Button } from "@/components/Button"
+import { Button } from "@/components/button"
 import { Dialog } from "@/components/Dialog"
-import { Input } from "@/components/Input"
-import { Label } from "@/components/Label"
-import { useCreateClient } from "@/features/clients"
+import { Input } from "@/components/input"
+import { Label } from "@/components/label"
+import {
+  type ClientPersonType,
+  type ClientSubclassRef,
+  useClientClassifications,
+  useCreateClient,
+} from "@/features/clients"
 
 interface NewClientDialogProps {
   trigger?: React.ReactNode
 }
 
-const CLIENT_CATEGORIES = [
-  { value: "MASTER_AGENT", label: "Master Agent" },
-  { value: "RESELLER", label: "Revendedor (Reseller)" },
-]
-
 const emptyForm = {
-  category: "",
-  subcategory: "",
-  person_type: "INDIVIDUAL",
+  class_id: "",
+  subclass_id: "",
+  person_type: "INDIVIDUAL" as ClientPersonType,
   document_number: "",
   name: "",
   phone: "",
 }
 
+type ClientFormState = typeof emptyForm
+
+function className(code: string, name: string): string {
+  return `${code} · ${name}`
+}
+
 export function NewClientDialog({ trigger }: NewClientDialogProps) {
   const createClient = useCreateClient()
+  const { data: classifications } = useClientClassifications()
   const [open, setOpen] = useState<boolean>(false)
-  const [form, setForm] = useState(emptyForm)
+  const [form, setForm] = useState<ClientFormState>(emptyForm)
   const [error, setError] = useState<string | null>(null)
 
-  const handleChange: (field: keyof typeof emptyForm, value: string) => void = (
-    field: keyof typeof emptyForm,
-    value: string,
-  ) => {
+  const selectedClass = classifications?.classes.find((c) => c.id === form.class_id)
+  const compatibleSubclasses: ClientSubclassRef[] =
+    selectedClass?.subclasses.filter((subclass) =>
+      subclass.allowedPersonTypes.includes(form.person_type),
+    ) ?? []
+  const classAllowsType =
+    selectedClass === undefined || selectedClass.allowedPersonTypes.includes(form.person_type)
+
+  const handleChange: (field: keyof ClientFormState, value: string) => void = (field, value) => {
+    if (field === "person_type") {
+      const nextType = value as ClientPersonType
+      setForm((prev) => {
+        const cls = classifications?.classes.find((c) => c.id === prev.class_id)
+        const keepsClass = cls === undefined || cls.allowedPersonTypes.includes(nextType)
+        const keepsSubclass =
+          keepsClass &&
+          (cls === undefined ||
+            cls.subclasses.some(
+              (subclass) =>
+                subclass.id === prev.subclass_id && subclass.allowedPersonTypes.includes(nextType),
+            ))
+        return {
+          ...prev,
+          person_type: nextType,
+          class_id: keepsClass ? prev.class_id : "",
+          subclass_id: keepsSubclass ? prev.subclass_id : "",
+        }
+      })
+      return
+    }
+
+    if (field === "class_id") {
+      setForm((prev) => ({ ...prev, class_id: value, subclass_id: "" }))
+      return
+    }
+
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -49,11 +88,11 @@ export function NewClientDialog({ trigger }: NewClientDialogProps) {
     setError(null)
     try {
       await createClient.mutateAsync({
-        category: form.category,
-        person_type: form.person_type === "CORPORATE" ? "CORPORATE" : "INDIVIDUAL",
+        person_type: form.person_type,
         document_number: form.document_number,
         name: form.name,
-        subcategory: form.subcategory || undefined,
+        class_id: form.class_id || undefined,
+        subclass_id: form.subclass_id || undefined,
         phone: form.phone || undefined,
       })
       reset()
@@ -127,20 +166,24 @@ export function NewClientDialog({ trigger }: NewClientDialogProps) {
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="client-category">Categoria</Label>
+              <Label htmlFor="client-class">Classe</Label>
               <select
-                id="client-category"
-                value={form.category}
-                onChange={(e) => handleChange("category", e.target.value)}
+                id="client-class"
+                value={form.class_id}
+                onChange={(e) => handleChange("class_id", e.target.value)}
                 required
                 className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40"
               >
                 <option value="" disabled>
-                  Selecione uma categoria
+                  Selecione uma classe
                 </option>
-                {CLIENT_CATEGORIES.map((category) => (
-                  <option key={category.value} value={category.value}>
-                    {category.label}
+                {classifications?.classes.map((clientClass) => (
+                  <option
+                    key={clientClass.id}
+                    value={clientClass.id}
+                    disabled={!clientClass.allowedPersonTypes.includes(form.person_type)}
+                  >
+                    {className(clientClass.code, clientClass.name)}
                   </option>
                 ))}
               </select>
@@ -148,13 +191,31 @@ export function NewClientDialog({ trigger }: NewClientDialogProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="client-subcategory">Subcategoria</Label>
-            <Input
-              id="client-subcategory"
-              value={form.subcategory}
-              onChange={(e) => handleChange("subcategory", e.target.value)}
-              placeholder="Opcional"
-            />
+            <Label htmlFor="client-subclass">Subclasse</Label>
+            <select
+              id="client-subclass"
+              value={form.subclass_id}
+              onChange={(e) => handleChange("subclass_id", e.target.value)}
+              disabled={!selectedClass || compatibleSubclasses.length === 0}
+              className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="">Sem subclasse</option>
+              {compatibleSubclasses.map((subclass) => (
+                <option key={subclass.id} value={subclass.id}>
+                  {className(subclass.code, subclass.name)}
+                </option>
+              ))}
+            </select>
+            {selectedClass && compatibleSubclasses.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                Nenhuma subclasse disponível para este tipo de pessoa.
+              </p>
+            )}
+            {!classAllowsType && (
+              <p className="text-xs text-muted-foreground">
+                Esta classe não aceita este tipo de pessoa.
+              </p>
+            )}
           </div>
 
           {error && (

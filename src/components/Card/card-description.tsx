@@ -1,0 +1,14 @@
+import { cn } from "cn"
+import type * as React from "react"
+
+function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-description"
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+export { CardDescription }

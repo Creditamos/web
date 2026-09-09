@@ -2,10 +2,10 @@
 
 import { FilePlus2Icon } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Button } from "@/components/Button"
+import { Button } from "@/components/button"
 import { Dialog } from "@/components/Dialog"
-import { Input } from "@/components/Input"
-import { Label } from "@/components/Label"
+import { Input } from "@/components/input"
+import { Label } from "@/components/label"
 import { useClientByDocument } from "@/features/clients"
 import { useOperators } from "@/features/operators"
 import { useProducts } from "@/features/products"
