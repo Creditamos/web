@@ -7,7 +7,7 @@ export interface AdminInfo {
   id: string
   email: string
   name: string
-  role: string
+  roleNames: string[]
 }
 
 interface AuthContextValue {

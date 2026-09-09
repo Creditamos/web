@@ -23,8 +23,11 @@ api.interceptors.response.use(
   (error: AxiosError<{ message?: string }>) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
       const pathname = window.location.pathname
-      const next = pathname.startsWith("/app") ? `?next=${encodeURIComponent(pathname)}` : ""
-      window.location.href = `/login${next}`
+      const onLoginPage = pathname.endsWith("/login")
+      if (!onLoginPage) {
+        const next = pathname.startsWith("/app") ? `?next=${encodeURIComponent(pathname)}` : ""
+        window.location.href = `/login${next}`
+      }
       return Promise.reject(error)
     }
 
