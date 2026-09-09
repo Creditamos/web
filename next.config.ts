@@ -8,6 +8,7 @@ const monorepoRoot = path.join(__dirname, "../../")
 const inMonorepo = existsSync(path.join(monorepoRoot, "package.json"))
 
 const nextConfig: NextConfig = {
+  reactCompiler: true,
   // O painel vive sob /app (externo), mantendo a landing na raiz.
   // basePath prefixa rotas E assets (_next) → /app/_next/static, absorvido
   // pelo handler @app do Caddy sem colidir com os assets da landing.

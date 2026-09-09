@@ -22,7 +22,7 @@
   },
   "overrides": [
     {
-      "includes": ["src/components/Label/**"],
+      "includes": ["src/components/label.tsx"],
       "linter": {
         "rules": {
           "a11y": {
