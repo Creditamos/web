@@ -42,7 +42,7 @@ export default function ClientsPage() {
               <tr>
                 <th className="px-4 py-3 font-medium">Nome</th>
                 <th className="px-4 py-3 font-medium">Documento</th>
-                <th className="px-4 py-3 font-medium">Categoria</th>
+                <th className="px-4 py-3 font-medium">Classificação</th>
                 <th className="px-4 py-3 font-medium">Tipo</th>
                 <th className="px-4 py-3 font-medium">Telefone</th>
                 <th className="px-4 py-3 font-medium">Status</th>
@@ -53,7 +53,22 @@ export default function ClientsPage() {
                 <tr key={client.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-3 font-medium">{client.name}</td>
                   <td className="px-4 py-3 font-mono text-xs">{client.documentNumber}</td>
-                  <td className="px-4 py-3">{client.category ?? "—"}</td>
+                  <td className="px-4 py-3">
+                    {client.class ? (
+                      <div className="flex flex-col">
+                        <span>
+                          {client.class.code} · {client.class.name}
+                        </span>
+                        {client.subclass && (
+                          <span className="text-xs text-muted-foreground">
+                            {client.subclass.code} · {client.subclass.name}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
                       {client.personType === "CORPORATE" ? "Jurídica" : "Física"}
