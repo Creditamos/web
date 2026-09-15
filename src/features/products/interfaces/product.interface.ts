@@ -1,3 +1,5 @@
+export type ProductClientType = "INDIVIDUAL" | "CORPORATE"
+
 export interface CreditProduct {
   id: string
   supplier: string | null
@@ -5,7 +7,7 @@ export interface CreditProduct {
   name: string
   class: string | null
   subclass: string | null
-  clientTypes: string[]
+  clientTypes: ProductClientType[]
   isActive: boolean
   createdAt: string
 }
