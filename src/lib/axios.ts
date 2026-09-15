@@ -25,7 +25,7 @@ api.interceptors.response.use(
       const pathname = window.location.pathname
       const onLoginPage = pathname.endsWith("/login")
       if (!onLoginPage) {
-        const next = pathname.startsWith("/app") ? `?next=${encodeURIComponent(pathname)}` : ""
+        const next = !pathname.startsWith("/api") ? `?next=${encodeURIComponent(pathname)}` : ""
         window.location.href = `/login${next}`
       }
       return Promise.reject(error)
