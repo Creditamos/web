@@ -8,6 +8,7 @@ export interface AdminInfo {
   email: string
   name: string
   roleNames: string[]
+  lastLoginAt: string | null
 }
 
 interface AuthContextValue {

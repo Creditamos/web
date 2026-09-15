@@ -30,4 +30,5 @@ export const Sidebar = Object.assign(SidebarLayout, {
   Brand: SidebarBrand,
   Nav: SidebarNav,
   User: SidebarUser,
+  Trigger: SidebarPrimitive.Trigger,
 })
