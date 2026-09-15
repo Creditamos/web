@@ -5,13 +5,13 @@ import {
   useQueryClient,
 } from "@tanstack/react-query"
 import { api } from "@/lib/axios"
-import type { CreditProposal } from "../interfaces/credit-proposal.interface"
+import type { CreditProposal, ProposalStatusEnum } from "../interfaces/credit-proposal.interface"
 
-function updateProposalStatus(id: string, status: string): Promise<CreditProposal> {
+function updateProposalStatus(id: string, status: ProposalStatusEnum): Promise<CreditProposal> {
   return api.put<CreditProposal>(`/proposals/${id}/status`, { status }).then((res) => res.data)
 }
 
-type UpdateProposalStatusVariables = { id: string; status: string }
+export type UpdateProposalStatusVariables = { id: string; status: ProposalStatusEnum }
 
 export type UpdateProposalStatusMutationResult = UseMutationResult<
   CreditProposal,

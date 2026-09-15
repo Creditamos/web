@@ -1,8 +1,9 @@
 export interface Operator {
   id: string
   supplier: string | null
+  code: string
   fullName: string
-  documentNumber: string
+  cpf: string
   email: string | null
   isActive: boolean
   createdAt: string
