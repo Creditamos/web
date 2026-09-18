@@ -3,6 +3,7 @@
 import type { LucideIcon } from "lucide-react"
 import {
   BanknoteIcon,
+  ContactIcon,
   FileTextIcon,
   FolderTreeIcon,
   LayoutDashboardIcon,
@@ -64,6 +65,12 @@ const sections: Array<{ label: string; links: NavLink[] }> = [
         label: "Fornecedores",
         icon: BanknoteIcon,
         match: (pathname) => pathname === "/suppliers" || pathname.startsWith("/suppliers/"),
+      },
+      {
+        href: "/operators",
+        label: "Operadores",
+        icon: ContactIcon,
+        match: (pathname) => pathname === "/operators" || pathname.startsWith("/operators/"),
       },
       {
         href: "/users",
