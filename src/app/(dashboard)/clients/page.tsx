@@ -14,7 +14,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import { type Client, useClients } from "@/features/clients"
-import { applyClientTable, useClientTableState } from "@/hooks/use-client-table"
+import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatDate, maskDocument, maskPhone } from "@/lib/format"
 import { Can } from "@/lib/scopes"
 

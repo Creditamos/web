@@ -14,7 +14,7 @@ import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import type { User } from "@/features/users"
 import { useUsers } from "@/features/users"
-import { applyClientTable, useClientTableState } from "@/hooks/use-client-table"
+import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatDate } from "@/lib/format"
 import { Can } from "@/lib/scopes"
 

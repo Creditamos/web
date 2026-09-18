@@ -2,7 +2,7 @@ import { cn } from "cn"
 import { ArrowDownIcon, ArrowUpIcon, CheckIcon, CopyIcon } from "lucide-react"
 import { type ReactNode, useState } from "react"
 import { Button } from "@/components/button"
-import type { SortDirection } from "@/hooks/use-client-table"
+import type { SortDirection } from "@/hooks/use-client-table.hook"
 
 export interface DataTableColumn<T> {
   key: string

@@ -14,7 +14,7 @@ import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import type { Role } from "@/features/roles"
 import { useRoles } from "@/features/roles"
-import { applyClientTable, useClientTableState } from "@/hooks/use-client-table"
+import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { Can } from "@/lib/scopes"
 
 const columns: DataTableColumn<Role>[] = [

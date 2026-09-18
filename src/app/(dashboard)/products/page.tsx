@@ -11,7 +11,7 @@ import { SearchInput } from "@/components/search-input"
 import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import { type CreditProduct, useProducts } from "@/features/products"
-import { applyClientTable, useClientTableState } from "@/hooks/use-client-table"
+import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatDate } from "@/lib/format"
 
 const columns: DataTableColumn<CreditProduct>[] = [

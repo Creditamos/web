@@ -24,7 +24,7 @@ import {
   proposalProductName,
   useProposals,
 } from "@/features/proposals"
-import { applyClientTable, useClientTableState } from "@/hooks/use-client-table"
+import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatCurrency, formatDateTime, shortId } from "@/lib/format"
 import { Can } from "@/lib/scopes"
 
