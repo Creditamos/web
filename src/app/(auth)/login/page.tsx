@@ -29,7 +29,6 @@ function LoginForm() {
     },
     validators: {
       onChange: loginSchema,
-      onSubmit: loginSchema,
     },
     onSubmit: async ({ value }) => {
       setError("")
