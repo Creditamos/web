@@ -22,7 +22,7 @@ export default function NewProposalPage() {
   const router = useRouter()
   const createProposal = useCreateProposal()
   const { data: products } = useProducts()
-  const { data: operators } = useOperators()
+  const { data: operators } = useOperators(true)
 
   const [clientDocument, setClientDocumentState] = useState("")
   const [clientLookup, setClientLookup] = useState("")

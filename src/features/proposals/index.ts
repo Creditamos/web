@@ -1,6 +1,7 @@
 export * from "./interfaces"
 export * from "./mutations/create-proposal.mutation"
 export * from "./mutations/delete-proposal.mutation"
+export * from "./mutations/update-proposal-operator.mutation"
 export * from "./mutations/update-proposal-status.mutation"
 export * from "./proposal-status"
 export * from "./queries/fetch-proposal-by-id.query"

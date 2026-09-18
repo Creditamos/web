@@ -9,9 +9,12 @@ import { Card } from "@/components/Card"
 import { ConfirmDialog } from "@/components/confirm-dialog"
 import { DetailList } from "@/components/detail-list"
 import { ErrorNote } from "@/components/error-note"
+import { Label } from "@/components/label"
 import { Loading } from "@/components/loading"
 import { PageHeader } from "@/components/page-header"
+import { NativeSelect } from "@/components/select-native"
 import { StatusBadge } from "@/components/status-badge"
+import { useOperators } from "@/features/operators"
 import {
   PROPOSAL_STATUS_LABELS,
   PROPOSAL_STATUS_TONES,
@@ -24,6 +27,7 @@ import {
   proposalTransitionScope,
   useDeleteProposal,
   useProposal,
+  useUpdateProposalOperator,
   useUpdateProposalStatus,
 } from "@/features/proposals"
 import { formatCurrency, formatDateTime, maskDocument, maskPhone, shortId } from "@/lib/format"
@@ -145,6 +149,9 @@ export default function ProposalDetailPage({
                 { label: "Operador", value: proposalOperatorName(proposal) ?? "—" },
               ]}
             />
+            <Can scope="proposals:update">
+              <OperatorAssign proposalId={proposal.id} operatorId={proposal.operator?.id ?? null} />
+            </Can>
           </Card.Content>
         </Card>
       </div>
@@ -218,6 +225,50 @@ export default function ProposalDetailPage({
         onConfirm={handleDelete}
         onOpenChange={setConfirmDelete}
       />
+    </div>
+  )
+}
+
+function OperatorAssign({
+  proposalId,
+  operatorId,
+}: {
+  proposalId: string
+  operatorId: string | null
+}) {
+  const { data: operators } = useOperators(true)
+  const updateOperator = useUpdateProposalOperator()
+  const [assignError, setAssignError] = useState<string | null>(null)
+
+  const handleChange = async (value: string) => {
+    setAssignError(null)
+    try {
+      await updateOperator.mutateAsync({ id: proposalId, operator_id: value || null })
+    } catch (err) {
+      setAssignError(err instanceof Error ? err.message : "Falha ao atualizar o operador.")
+    }
+  }
+
+  return (
+    <div className="mt-4 space-y-2 border-t border-border pt-4">
+      <Label htmlFor="proposal-operator">Operador responsável</Label>
+      <NativeSelect
+        id="proposal-operator"
+        value={operatorId ?? ""}
+        onChange={(e) => void handleChange(e.target.value)}
+        disabled={updateOperator.isPending}
+      >
+        <option value="">Sem operador</option>
+        {operators?.map((operator) => (
+          <option key={operator.id} value={operator.id}>
+            {operator.fullName} ({operator.code})
+          </option>
+        ))}
+      </NativeSelect>
+      {updateOperator.isPending ? (
+        <p className="text-xs text-muted-foreground">Salvando...</p>
+      ) : null}
+      {assignError ? <p className="text-xs text-destructive">{assignError}</p> : null}
     </div>
   )
 }
