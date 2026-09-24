@@ -20,7 +20,10 @@ import {
   PROPOSAL_STATUS_TONES,
   PROPOSAL_TRANSITION_LABELS,
   PROPOSAL_TRANSITIONS,
+  type ProposalEvent,
   type ProposalStatusEnum,
+  proposalEventLabel,
+  proposalEventSummary,
   proposalOperatorName,
   proposalProductName,
   proposalSupplierName,
@@ -196,6 +199,8 @@ export default function ProposalDetailPage({
         </Card.Content>
       </Card>
 
+      <ProposalTimeline events={proposal.events ?? []} />
+
       <ConfirmDialog
         open={pendingTransition !== null}
         title={pendingTransition ? `Confirmar: ${PROPOSAL_STATUS_LABELS[pendingTransition]}` : ""}
@@ -226,6 +231,45 @@ export default function ProposalDetailPage({
         onOpenChange={setConfirmDelete}
       />
     </div>
+  )
+}
+
+function ProposalTimeline({ events }: { events: ProposalEvent[] }) {
+  if (events.length === 0) {
+    return null
+  }
+
+  return (
+    <Card>
+      <Card.Header>
+        <Card.Title>Jornada da proposta</Card.Title>
+        <Card.Description>
+          Eventos registrados ao longo do fluxo, do registro pelo parceiro até a decisão final.
+        </Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <ol className="relative space-y-5 border-s border-border ps-6">
+          {events.map((event) => {
+            const summary = proposalEventSummary(event)
+            return (
+              <li key={event.id} className="relative">
+                <span
+                  className="absolute -start-[27px] top-1 size-2.5 rounded-full bg-border"
+                  aria-hidden="true"
+                />
+                <p className="text-sm font-medium leading-tight">
+                  {proposalEventLabel(event.type)}
+                </p>
+                {summary ? <p className="mt-0.5 text-xs text-muted-foreground">{summary}</p> : null}
+                <p className="mt-0.5 text-xs text-muted-foreground/70">
+                  {formatDateTime(event.createdAt)}
+                </p>
+              </li>
+            )
+          })}
+        </ol>
+      </Card.Content>
+    </Card>
   )
 }
 

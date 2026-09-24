@@ -1,4 +1,35 @@
-export type ProposalStatusEnum = "PENDING" | "REVIEW" | "APPROVED" | "REJECTED" | "CANCELLED"
+export type ProposalStatusEnum =
+  | "PENDING"
+  | "AWAITING_ACCEPTANCE"
+  | "SUBMITTED"
+  | "AWAITING_OPERATOR"
+  | "PENDING_INFO"
+  | "REVIEW"
+  | "APPROVED"
+  | "REJECTED"
+  | "CANCELLED"
+
+export type ProposalEventType =
+  | "PROPOSAL_CREATED"
+  | "ACCEPTANCE_SENT"
+  | "CLIENT_ACCEPTED"
+  | "CLIENT_DECLINED"
+  | "SUBMITTED_TO_PORTAL"
+  | "PORTAL_RESPONSE"
+  | "OPERATOR_ASSIGNED"
+  | "OPERATOR_DECISION"
+  | "STATUS_CHANGED"
+
+/**
+ * Evento da jornada da proposta (timeline). Espelha
+ * `ProposalEvent`/`PROPOSAL_EVENT_TYPES` do backend.
+ */
+export interface ProposalEvent {
+  id: string
+  type: ProposalEventType | string
+  payload?: Record<string, unknown> | null
+  createdAt: string
+}
 
 /**
  * Propostas retornam entidades cruas (não DTOs mascarados) com relacionamentos
@@ -45,6 +76,7 @@ export interface ProposalOperator {
   fullName?: string
   cpf?: string
   email?: string | null
+  region?: string | null
   supplier?: string | ProposalNameRef | null
 }
 
@@ -55,14 +87,23 @@ export interface CreditProposal {
   operator?: ProposalOperator | null
   requestedAmount: string
   preApprovedLimit?: string | null
+  downPayment?: string | null
+  assetType?: string | null
+  licensePlate?: string | null
   status: ProposalStatusEnum
   externalKey?: string | null
+  acceptedAt?: string | null
   createdAt: string
   updatedAt: string
+  events?: ProposalEvent[]
 }
 
 export const PROPOSAL_STATUSES: ProposalStatusEnum[] = [
   "PENDING",
+  "AWAITING_ACCEPTANCE",
+  "SUBMITTED",
+  "AWAITING_OPERATOR",
+  "PENDING_INFO",
   "REVIEW",
   "APPROVED",
   "REJECTED",
