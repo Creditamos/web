@@ -83,7 +83,7 @@ function LoginForm() {
                   autoComplete="username"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="admin@creditamos.com"
+                  placeholder="admin@creditamos.com.br"
                   aria-invalid={field.state.meta.errors.length > 0}
                 />
                 {field.state.meta.errors.map((fieldError) =>
