@@ -83,7 +83,8 @@ export interface ProposalOperator {
 export interface CreditProposal {
   id: string
   client: ProposalClient
-  product: ProposalProduct
+  product?: ProposalProduct | null
+  supplier?: string | ProposalNameRef | null
   operator?: ProposalOperator | null
   requestedAmount: string
   preApprovedLimit?: string | null
@@ -132,8 +133,10 @@ export function proposalProductName(proposal: Pick<CreditProposal, "product">): 
   return proposal.product?.name ?? "—"
 }
 
-export function proposalSupplierName(proposal: Pick<CreditProposal, "product">): string | null {
-  return readableName(proposal.product?.supplier)
+export function proposalSupplierName(
+  proposal: Pick<CreditProposal, "supplier" | "product">,
+): string | null {
+  return readableName(proposal.supplier) ?? readableName(proposal.product?.supplier)
 }
 
 export function proposalClassName(proposal: Pick<CreditProposal, "product">): string | null {
