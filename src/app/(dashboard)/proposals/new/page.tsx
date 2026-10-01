@@ -36,6 +36,9 @@ export default function NewProposalPage() {
   const [productId, setProductId] = useState("")
   const [operatorId, setOperatorId] = useState("")
   const [amount, setAmount] = useState("")
+  const [responsibleName, setResponsibleName] = useState("")
+  const [responsiblePhone, setResponsiblePhone] = useState("")
+  const [acceptedTerm, setAcceptedTerm] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const isPersonTypeMismatch =
@@ -74,6 +77,10 @@ export default function NewProposalPage() {
       setError("Informe um valor de solicitação maior que zero.")
       return
     }
+    if (!acceptedTerm) {
+      setError("Você deve ler e concordar com o Termo de Aceite para prosseguir.")
+      return
+    }
 
     try {
       const proposal = await createProposal.mutateAsync({
@@ -81,6 +88,9 @@ export default function NewProposalPage() {
         product_id: productId,
         operator_id: operatorId || undefined,
         requested_amount: parsedAmount,
+        accepted_term: acceptedTerm,
+        responsible_name: responsibleName || undefined,
+        responsible_phone: responsiblePhone.replace(/\D/g, "") || undefined,
       })
       router.push(`/proposals/${proposal.id}`)
     } catch (err) {
@@ -187,11 +197,48 @@ export default function NewProposalPage() {
             </FormField>
           </div>
 
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 mt-4">
+            <FormField htmlFor="responsible-name" label="Nome do cliente (Responsável)">
+              <Input
+                id="responsible-name"
+                value={responsibleName}
+                onChange={(e) => setResponsibleName(e.target.value)}
+                placeholder="Nome completo do indicado"
+                required
+              />
+            </FormField>
+
+            <FormField htmlFor="responsible-phone" label="WhatsApp do cliente">
+              <Input
+                id="responsible-phone"
+                value={responsiblePhone}
+                onChange={(e) => setResponsiblePhone(e.target.value)}
+                placeholder="(00) 00000-0000"
+                required
+              />
+            </FormField>
+          </div>
+
           {isPersonTypeMismatch && (
             <p className="text-sm text-warning">
               O produto selecionado não atende ao tipo de pessoa deste cliente.
             </p>
           )}
+        </section>
+
+        <section className="space-y-4">
+          <div className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              id="accept-term"
+              checked={acceptedTerm}
+              onChange={(e) => setAcceptedTerm(e.target.checked)}
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <Label htmlFor="accept-term" className="text-sm font-normal text-foreground leading-snug">
+              Declaro que li e concordo com o Termo de Aceite do Parceiro, estando ciente das regras de negócio e das condições para prosseguimento desta indicação.
+            </Label>
+          </div>
         </section>
 
         {error ? <ErrorNote className="m-0">{error}</ErrorNote> : null}

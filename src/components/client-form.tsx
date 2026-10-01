@@ -312,28 +312,33 @@ export function ClientForm({
             </NativeSelect>
           </FormField>
 
-          {isCorporate ? (
-            <FormField
-              htmlFor="client-headquarters"
-              label="Matriz"
-              optional
-              hint="Deixe vazio se este cliente for a matriz do grupo."
+          <FormField
+            htmlFor="client-headquarters"
+            label={isCorporate ? "Matriz" : "Empresa / Filial"}
+            optional={isCorporate}
+            hint={
+              isCorporate
+                ? "Deixe vazio se este cliente for a matriz do grupo."
+                : "Selecione a matriz ou filial à qual este vendedor pertence."
+            }
+          >
+            <NativeSelect
+              id="client-headquarters"
+              value={values.headquarters_id}
+              onChange={(e) => setField("headquarters_id", e.target.value)}
+              className="sm:col-span-2"
+              required={!isCorporate}
             >
-              <NativeSelect
-                id="client-headquarters"
-                value={values.headquarters_id}
-                onChange={(e) => setField("headquarters_id", e.target.value)}
-                className="sm:col-span-2"
-              >
-                <option value="">Sem matriz (é a matriz do grupo)</option>
-                {headquarterCandidates.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {displayName(client.code, client.name)}
-                  </option>
-                ))}
-              </NativeSelect>
-            </FormField>
-          ) : null}
+              <option value="">
+                {isCorporate ? "Sem matriz (é a matriz do grupo)" : "Selecione a empresa/filial"}
+              </option>
+              {headquarterCandidates.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {displayName(client.code, client.name)}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormField>
         </div>
       </section>
 
