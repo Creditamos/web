@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }: LayoutProps<"/">) {
             <SidebarTrigger />
             <span className="text-sm font-semibold tracking-tight lg:hidden">Creditamos</span>
           </div>
-          <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out fill-mode-both">
             {children}
           </div>
         </Sidebar>

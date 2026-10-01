@@ -130,8 +130,8 @@ export function DataTable<T>({
             <tr
               key={getRowId(row)}
               className={cn(
-                "group/row border-b border-border last:border-b-0",
-                onRowClick && "cursor-pointer transition-colors hover:bg-muted/40",
+                "group/row border-b border-border/50 last:border-b-0",
+                onRowClick && "cursor-pointer transition-colors duration-200 hover:bg-secondary/40",
               )}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
             >
