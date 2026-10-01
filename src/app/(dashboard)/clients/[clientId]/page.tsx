@@ -33,13 +33,11 @@ import {
 } from "@/lib/format"
 import { Can } from "@/lib/scopes"
 
-type ClientTab = "overview" | "organization" | "proposals" | "documents"
+type ClientTab = "overview" | "organization" | "proposals" | "network" | "documents"
 
-const TABS: Array<{ id: ClientTab; label: string }> = [
-  { id: "overview", label: "Visão geral" },
-  { id: "organization", label: "Organização" },
-  { id: "proposals", label: "Propostas" },
-]
+import { ClientNetworkTab } from "./client-network-tab"
+
+
 
 function toFormValues(client: Client): ClientFormInitialValues {
   return {
@@ -133,6 +131,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
 
   const isCorporate = client.personType === "CORPORATE"
 
+  const displayTabs = [
+    { id: "overview" as ClientTab, label: "Visão geral" },
+    { id: "organization" as ClientTab, label: "Organização" },
+    ...(isCorporate ? [{ id: "network" as ClientTab, label: "Rede de Vendas" }] : []),
+    { id: "proposals" as ClientTab, label: "Propostas" },
+  ]
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -172,7 +177,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
       />
 
       <div className="flex gap-4 border-b border-border">
-        {TABS.map(({ id, label }) => (
+        {displayTabs.map(({ id, label }) => (
           <button
             key={id}
             type="button"
@@ -295,6 +300,12 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
               />
             </Card.Content>
           </Card>
+        </div>
+      )}
+
+      {activeTab === "network" && isCorporate && (
+        <div className="space-y-6">
+          <ClientNetworkTab clientId={client.id} />
         </div>
       )}
 
