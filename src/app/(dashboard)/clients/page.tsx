@@ -59,11 +59,19 @@ const columns: DataTableColumn<Client>[] = [
     key: "personType",
     header: "Tipo",
     sortValue: (client) => client.personType,
-    cell: (client) => (
-      <span className="text-xs text-muted-foreground">
-        {client.personType === "CORPORATE" ? "PJ" : "PF"}
-      </span>
-    ),
+    cell: (client) => {
+      let label = "PF"
+      if (client.personType === "CORPORATE") {
+        label = client.headquarters ? "Filial" : "Matriz"
+      } else {
+        label = "Vendedor"
+      }
+      return (
+        <span className="inline-flex items-center text-[10px] uppercase font-semibold tracking-wider text-muted-foreground border border-border px-1.5 py-0.5 rounded-md bg-muted/30">
+          {label}
+        </span>
+      )
+    },
   },
   {
     key: "phone",

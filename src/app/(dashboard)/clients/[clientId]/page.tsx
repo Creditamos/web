@@ -213,7 +213,12 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
             <Card.Content>
               <DetailList
                 items={[
-                  { label: "Tipo", value: isCorporate ? "Pessoa Jurídica" : "Pessoa Física" },
+                  { 
+                    label: "Tipo", 
+                    value: isCorporate 
+                      ? (client.headquarters ? "Pessoa Jurídica (Filial)" : "Pessoa Jurídica (Matriz)") 
+                      : "Pessoa Física (Vendedor)" 
+                  },
                   {
                     label: "Classe",
                     value: client.class ? `${client.class.code} · ${client.class.name}` : "—",
@@ -250,7 +255,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
             <Card.Content>
               <DetailList
                 items={[
-                  { label: "Matriz", value: client.headquarters ?? "—" },
+                  { label: isCorporate ? "Matriz" : "Empresa / Filial", value: client.headquarters ?? "—" },
                   { label: "Master agent", value: client.masterAgent ?? "—" },
                   ...(isCorporate
                     ? [
