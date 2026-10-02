@@ -61,12 +61,7 @@ const sections: Array<{ label: string; links: NavLink[] }> = [
   {
     label: "Administração",
     links: [
-      {
-        href: "/organizations",
-        label: "Organizações",
-        icon: BuildingIcon,
-        match: (pathname) => pathname === "/organizations" || pathname.startsWith("/organizations/"),
-      },
+      
       {
         href: "/suppliers",
         label: "Fornecedores",
