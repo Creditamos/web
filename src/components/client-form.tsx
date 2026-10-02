@@ -315,7 +315,7 @@ export function ClientForm({
           <FormField
             htmlFor="client-headquarters"
             label={isCorporate ? "Matriz" : "Empresa / Filial"}
-            optional={isCorporate}
+            optional
             hint={
               isCorporate
                 ? "Deixe vazio se este cliente for a matriz do grupo."
@@ -327,7 +327,6 @@ export function ClientForm({
               value={values.headquarters_id}
               onChange={(e) => setField("headquarters_id", e.target.value)}
               className="sm:col-span-2"
-              required={!isCorporate}
             >
               <option value="">
                 {isCorporate ? "Sem matriz (é a matriz do grupo)" : "Selecione a empresa/filial"}
