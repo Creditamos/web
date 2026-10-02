@@ -21,6 +21,7 @@ export const SCOPE_CATALOG = {
   products: ["read", "create", "update", "delete"],
   users: ["read", "create", "update", "delete"],
   roles: ["read", "create", "update", "delete"],
+  organizations: ["read", "create", "update", "delete"],
 } as const
 
 export type ScopeResource = keyof typeof SCOPE_CATALOG
