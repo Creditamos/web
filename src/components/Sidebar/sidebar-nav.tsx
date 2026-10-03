@@ -3,7 +3,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
   BanknoteIcon,
-  BuildingIcon,
   ContactIcon,
   FileTextIcon,
   FolderTreeIcon,
