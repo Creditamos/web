@@ -26,6 +26,7 @@ export interface ClientFormInitialValues {
   group_id?: string | null
   subgroup_id?: string | null
   headquarters_id?: string | null
+  master_agent_id?: string | null
   bank_code?: string | null
   agency?: string | null
   account?: string | null
@@ -52,6 +53,7 @@ export interface ClientFormValues {
   group_id: string
   subgroup_id: string
   headquarters_id: string
+  master_agent_id: string
   bank_code: string
   agency: string
   account: string
@@ -69,6 +71,7 @@ export interface ClientSubmitValues {
   group_id?: string
   subgroup_id?: string
   headquarters_id?: string
+  master_agent_id?: string
   bank_code?: string
   agency?: string
   account?: string
@@ -86,6 +89,7 @@ const emptyValues: ClientFormValues = {
   group_id: "",
   subgroup_id: "",
   headquarters_id: "",
+  master_agent_id: "",
   bank_code: "",
   agency: "",
   account: "",
@@ -124,6 +128,7 @@ export function ClientForm({
     group_id: initialValues?.group_id ?? "",
     subgroup_id: initialValues?.subgroup_id ?? "",
     headquarters_id: initialValues?.headquarters_id ?? "",
+    master_agent_id: initialValues?.master_agent_id ?? "",
     bank_code: initialValues?.bank_code ?? "",
     agency: initialValues?.agency ?? "",
     account: initialValues?.account ?? "",
@@ -147,6 +152,22 @@ export function ClientForm({
         client.id !== initialValues?.id &&
         client.id !== values.headquarters_id,
     ) ?? []
+
+  const masterAgentCandidates =
+    clients?.filter((client) => {
+      if (client.id === initialValues?.id) return false
+      if (client.id === values.master_agent_id) return true
+      const isPartner =
+        client.class?.code === "2" ||
+        client.subclass?.code === "1.10" ||
+        client.subclass?.code === "1.11"
+      return isPartner
+    }) ?? []
+
+  const availableMasterAgents =
+    masterAgentCandidates.length > 0
+      ? masterAgentCandidates
+      : (clients?.filter((c) => c.id !== initialValues?.id) ?? [])
 
   const setField = (field: keyof ClientFormValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }))
@@ -184,6 +205,7 @@ export function ClientForm({
       group_id: nonEmpty(values.group_id),
       subgroup_id: nonEmpty(values.subgroup_id),
       headquarters_id: nonEmpty(values.headquarters_id),
+      master_agent_id: nonEmpty(values.master_agent_id),
       bank_code: nonEmpty(values.bank_code),
       agency: nonEmpty(values.agency),
       account: nonEmpty(values.account),
@@ -334,6 +356,29 @@ export function ClientForm({
               {headquarterCandidates.map((client) => (
                 <option key={client.id} value={client.id}>
                   {displayName(client.code, client.name)}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormField>
+
+          <FormField
+            htmlFor="client-master-agent"
+            label="Representante / Parceiro Master"
+            optional
+            hint="Parceiro ou representante responsável pela captação ou indicação (PF ou PJ)."
+          >
+            <NativeSelect
+              id="client-master-agent"
+              value={values.master_agent_id}
+              onChange={(e) => setField("master_agent_id", e.target.value)}
+              className="sm:col-span-2"
+            >
+              <option value="">Nenhum (sem representante vinculado)</option>
+              {availableMasterAgents.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {displayName(client.code, client.name)} (
+                  {client.personType === "CORPORATE" ? "PJ" : "PF"}
+                  {client.subclass?.name ? ` · ${client.subclass.name}` : ""})
                 </option>
               ))}
             </NativeSelect>

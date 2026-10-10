@@ -15,7 +15,13 @@ import { ErrorNote } from "@/components/error-note"
 import { Loading } from "@/components/loading"
 import { PageHeader } from "@/components/page-header"
 import { StatusBadge } from "@/components/status-badge"
-import { type Client, useClient, useSaveClientDocuments, useUpdateClient } from "@/features/clients"
+import {
+  type Client,
+  useClient,
+  useClients,
+  useSaveClientDocuments,
+  useUpdateClient,
+} from "@/features/clients"
 import {
   type CreditProposal,
   PROPOSAL_STATUS_LABELS,
@@ -37,8 +43,6 @@ type ClientTab = "overview" | "organization" | "proposals" | "network" | "docume
 
 import { ClientNetworkTab } from "./client-network-tab"
 
-
-
 function toFormValues(client: Client): ClientFormInitialValues {
   return {
     id: client.id,
@@ -51,6 +55,7 @@ function toFormValues(client: Client): ClientFormInitialValues {
     group_id: client.group?.id,
     subgroup_id: client.subgroup?.id,
     headquarters_id: client.headquarters,
+    master_agent_id: client.masterAgent,
     bank_code: client.bankCode,
     agency: client.agency,
     account: client.account,
@@ -105,6 +110,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
   const { clientId } = use(params)
   const router = useRouter()
   const { data: client, isLoading, error } = useClient(clientId)
+  const { data: clients } = useClients()
   const { data: proposals } = useClientProposals(clientId)
   const updateClient = useUpdateClient()
   const saveDocuments = useSaveClientDocuments()
@@ -130,11 +136,19 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
   }
 
   const isCorporate = client.personType === "CORPORATE"
+  const isRepresentative =
+    client.class?.code === "2" ||
+    client.subclass?.code === "1.10" ||
+    client.subclass?.code === "1.11"
+  const hasNetwork =
+    isCorporate ||
+    isRepresentative ||
+    (clients?.some((c) => c.headquarters === client.id || c.masterAgent === client.id) ?? false)
 
   const displayTabs = [
     { id: "overview" as ClientTab, label: "Visão geral" },
     { id: "organization" as ClientTab, label: "Organização" },
-    ...(isCorporate ? [{ id: "network" as ClientTab, label: "Rede de Vendas" }] : []),
+    ...(hasNetwork ? [{ id: "network" as ClientTab, label: "Rede / Parceiros" }] : []),
     { id: "proposals" as ClientTab, label: "Propostas" },
   ]
 
@@ -218,11 +232,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
             <Card.Content>
               <DetailList
                 items={[
-                  { 
-                    label: "Tipo", 
-                    value: isCorporate 
-                      ? (client.headquarters ? "Pessoa Jurídica (Filial)" : "Pessoa Jurídica (Matriz)") 
-                      : "Pessoa Física (Vendedor)" 
+                  {
+                    label: "Tipo",
+                    value: isCorporate
+                      ? client.headquarters
+                        ? "Pessoa Jurídica (Filial)"
+                        : "Pessoa Jurídica (Matriz)"
+                      : "Pessoa Física (Vendedor)",
                   },
                   {
                     label: "Classe",
@@ -258,25 +274,41 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
               <Card.Title>Contexto</Card.Title>
             </Card.Header>
             <Card.Content>
-              <DetailList
-                items={[
-                  { label: isCorporate ? "Matriz" : "Empresa / Filial", value: client.headquarters ?? "—" },
-                  { label: "Master agent", value: client.masterAgent ?? "—" },
-                  ...(isCorporate
-                    ? [
-                        { label: "Banco", value: client.bankCode ?? "—" },
-                        { label: "Agência", value: client.agency ?? "—" },
-                        {
-                          label: "Conta",
-                          value: client.account
-                            ? `${client.account}-${client.accountDigit ?? ""}`
-                            : "—",
-                        },
-                        { label: "Tipo de conta", value: client.accountType ?? "—" },
-                      ]
-                    : []),
-                ]}
-              />
+              {(() => {
+                const hqClient = clients?.find((c) => c.id === client.headquarters)
+                const agentClient = clients?.find((c) => c.id === client.masterAgent)
+                return (
+                  <DetailList
+                    items={[
+                      {
+                        label: isCorporate ? "Matriz" : "Empresa / Filial",
+                        value: hqClient
+                          ? `${hqClient.code} · ${hqClient.name}`
+                          : (client.headquarters ?? "—"),
+                      },
+                      {
+                        label: "Representante / Master agent",
+                        value: agentClient
+                          ? `${agentClient.code} · ${agentClient.name}`
+                          : (client.masterAgent ?? "—"),
+                      },
+                      ...(isCorporate
+                        ? [
+                            { label: "Banco", value: client.bankCode ?? "—" },
+                            { label: "Agência", value: client.agency ?? "—" },
+                            {
+                              label: "Conta",
+                              value: client.account
+                                ? `${client.account}-${client.accountDigit ?? ""}`
+                                : "—",
+                            },
+                            { label: "Tipo de conta", value: client.accountType ?? "—" },
+                          ]
+                        : []),
+                    ]}
+                  />
+                )
+              })()}
             </Card.Content>
           </Card>
 
@@ -303,7 +335,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
         </div>
       )}
 
-      {activeTab === "network" && isCorporate && (
+      {activeTab === "network" && hasNetwork && (
         <div className="space-y-6">
           <ClientNetworkTab clientId={client.id} />
         </div>
