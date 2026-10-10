@@ -180,6 +180,7 @@ export default function DashboardPage(): JSX.Element {
               rows={recentProposals}
               getRowId={(proposal) => proposal.id}
               onRowClick={(proposal) => router.push(`/proposals/${proposal.id}`)}
+              onEdit={(proposal) => router.push(`/proposals/${proposal.id}`)}
             />
           )}
         </TablePanel>

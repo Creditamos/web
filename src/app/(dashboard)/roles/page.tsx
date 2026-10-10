@@ -13,7 +13,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import type { Role } from "@/features/roles"
-import { useRoles } from "@/features/roles"
+import { useDeleteRole, useRoles } from "@/features/roles"
 import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { Can } from "@/lib/scopes"
 
@@ -61,9 +61,12 @@ const columns: DataTableColumn<Role>[] = [
   },
 ]
 
+const PROTECTED_ROLES = new Set(["SUPER_ADMIN"])
+
 export default function RolesPage() {
   const router = useRouter()
   const { data: roles, isLoading, error } = useRoles()
+  const deleteRole = useDeleteRole()
   const { state, setSearch, toggleSort, setPage } = useClientTableState({ sortKey: "name" })
 
   const items = roles ?? []
@@ -132,6 +135,15 @@ export default function RolesPage() {
             rows={rows}
             getRowId={(role) => role.id}
             onRowClick={(role) => router.push(`/roles/${role.id}`)}
+            onEdit={(role) => router.push(`/roles/${role.id}`)}
+            onDelete={async (role) => {
+              await deleteRole.mutateAsync(role.id)
+            }}
+            canDelete={(role) => !PROTECTED_ROLES.has(role.name)}
+            deleteConfirmTitle={(role) => `Excluir perfil "${role.name}"?`}
+            deleteConfirmDescription={(role) =>
+              `O perfil de acesso "${role.name}" será excluído definitivamente.`
+            }
             sortKey={state.sortKey}
             sortDirection={state.sortDirection}
             onSortChange={(column) => toggleSort(column.key)}

@@ -13,7 +13,7 @@ import { SearchInput } from "@/components/search-input"
 import { StatusBadge } from "@/components/status-badge"
 import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
-import { type Client, useClients } from "@/features/clients"
+import { type Client, useClients, useDeleteClient } from "@/features/clients"
 import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatDate, maskDocument, maskPhone } from "@/lib/format"
 import { Can } from "@/lib/scopes"
@@ -100,6 +100,7 @@ const columns: DataTableColumn<Client>[] = [
 export default function ClientsPage() {
   const router = useRouter()
   const { data: clients, isLoading, error } = useClients()
+  const deleteClient = useDeleteClient()
   const { state, setSearch, toggleSort, setPage } = useClientTableState({ sortKey: "name" })
 
   const items = clients ?? []
@@ -181,6 +182,14 @@ export default function ClientsPage() {
             rows={rows}
             getRowId={(client) => client.id}
             onRowClick={(client) => router.push(`/clients/${client.id}`)}
+            onEdit={(client) => router.push(`/clients/${client.id}`)}
+            onDelete={async (client) => {
+              await deleteClient.mutateAsync(client.id)
+            }}
+            deleteConfirmTitle={(client) => `Excluir cliente "${client.name}"?`}
+            deleteConfirmDescription={(client) =>
+              `O cliente ${client.name} (${client.code}) será excluído definitivamente.`
+            }
             sortKey={state.sortKey}
             sortDirection={state.sortDirection}
             onSortChange={(column) => toggleSort(column.key)}

@@ -15,7 +15,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import type { Operator } from "@/features/operators"
-import { useOperators } from "@/features/operators"
+import { useDeleteOperator, useOperators } from "@/features/operators"
 import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatDate, maskPhone } from "@/lib/format"
 import { Can } from "@/lib/scopes"
@@ -88,6 +88,7 @@ export default function OperatorsPage() {
     isLoading,
     error,
   } = useOperators(activeFilter === "all" ? undefined : activeFilter === "active")
+  const deleteOperator = useDeleteOperator()
   const { state, setSearch, toggleSort, setPage } = useClientTableState({ sortKey: "fullName" })
 
   const items = operators ?? []
@@ -168,6 +169,14 @@ export default function OperatorsPage() {
             rows={rows}
             getRowId={(operator) => operator.id}
             onRowClick={(operator) => router.push(`/operators/${operator.id}`)}
+            onEdit={(operator) => router.push(`/operators/${operator.id}`)}
+            onDelete={async (operator) => {
+              await deleteOperator.mutateAsync(operator.id)
+            }}
+            deleteConfirmTitle={(operator) => `Excluir operador "${operator.fullName}"?`}
+            deleteConfirmDescription={(operator) =>
+              `O operador ${operator.fullName} (${operator.code}) deixará de aparecer nas listas.`
+            }
             sortKey={state.sortKey}
             sortDirection={state.sortDirection}
             onSortChange={(column) => toggleSort(column.key)}

@@ -13,7 +13,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import type { User } from "@/features/users"
-import { useUsers } from "@/features/users"
+import { useDeleteUser, useUsers } from "@/features/users"
 import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatDate } from "@/lib/format"
 import { Can } from "@/lib/scopes"
@@ -65,6 +65,7 @@ const columns: DataTableColumn<User>[] = [
 export default function UsersPage() {
   const router = useRouter()
   const { data: users, isLoading, error } = useUsers()
+  const deleteUser = useDeleteUser()
   const { state, setSearch, toggleSort, setPage } = useClientTableState({ sortKey: "name" })
 
   const items = users ?? []
@@ -133,6 +134,14 @@ export default function UsersPage() {
             rows={rows}
             getRowId={(user) => user.id}
             onRowClick={(user) => router.push(`/users/${user.id}`)}
+            onEdit={(user) => router.push(`/users/${user.id}`)}
+            onDelete={async (user) => {
+              await deleteUser.mutateAsync(user.id)
+            }}
+            deleteConfirmTitle={(user) => `Excluir usuário "${user.name}"?`}
+            deleteConfirmDescription={(user) =>
+              `O usuário ${user.name} (${user.email}) será excluído.`
+            }
             sortKey={state.sortKey}
             sortDirection={state.sortDirection}
             onSortChange={(column) => toggleSort(column.key)}

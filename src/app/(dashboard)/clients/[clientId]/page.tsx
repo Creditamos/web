@@ -349,6 +349,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ clientI
               rows={proposals}
               getRowId={(proposal) => proposal.id}
               onRowClick={(proposal) => router.push(`/proposals/${proposal.id}`)}
+              onEdit={(proposal) => router.push(`/proposals/${proposal.id}`)}
             />
           ) : (
             <EmptyState

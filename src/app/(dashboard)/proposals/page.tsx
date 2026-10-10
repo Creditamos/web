@@ -22,6 +22,7 @@ import {
   type ProposalStatusEnum,
   proposalOperatorName,
   proposalProductName,
+  useDeleteProposal,
   useProposals,
 } from "@/features/proposals"
 import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
@@ -102,6 +103,7 @@ export default function ProposalsPage() {
     isLoading,
     error,
   } = useProposals(statusFilter === "ALL" ? undefined : statusFilter)
+  const deleteProposal = useDeleteProposal()
   const { state, setSearch, toggleSort, setPage } = useClientTableState({
     sortKey: "createdAt",
     sortDirection: "desc",
@@ -223,6 +225,14 @@ export default function ProposalsPage() {
             rows={rows}
             getRowId={(proposal) => proposal.id}
             onRowClick={(proposal) => router.push(`/proposals/${proposal.id}`)}
+            onEdit={(proposal) => router.push(`/proposals/${proposal.id}`)}
+            onDelete={async (proposal) => {
+              await deleteProposal.mutateAsync(proposal.id)
+            }}
+            deleteConfirmTitle={(proposal) =>
+              `Excluir proposta ${proposal.externalKey ?? proposal.id.slice(0, 8)}?`
+            }
+            deleteConfirmDescription="Tem certeza de que deseja excluir esta proposta de crédito? Esta ação não pode ser desfeita."
             sortKey={state.sortKey}
             sortDirection={state.sortDirection}
             onSortChange={(column) => toggleSort(column.key)}

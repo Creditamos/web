@@ -7,7 +7,7 @@ import { DataTable, type DataTableColumn } from "@/components/data-table"
 import { EmptyState } from "@/components/empty-state"
 import { ErrorNote } from "@/components/error-note"
 import { StatusBadge } from "@/components/status-badge"
-import { type Client, useClients } from "@/features/clients"
+import { type Client, useClients, useDeleteClient } from "@/features/clients"
 import { maskDocument, maskPhone } from "@/lib/format"
 import { Can } from "@/lib/scopes"
 
@@ -98,6 +98,7 @@ function getColumns(clientId: string): DataTableColumn<Client>[] {
 export function ClientNetworkTab({ clientId }: { clientId: string }) {
   const router = useRouter()
   const { data: clients, isLoading, error } = useClients()
+  const deleteClient = useDeleteClient()
 
   if (error) {
     return <ErrorNote>Não foi possível carregar a rede: {error.message}</ErrorNote>
@@ -136,6 +137,14 @@ export function ClientNetworkTab({ clientId }: { clientId: string }) {
         rows={network}
         getRowId={(client) => client.id}
         onRowClick={(client) => router.push(`/clients/${client.id}`)}
+        onEdit={(client) => router.push(`/clients/${client.id}`)}
+        onDelete={async (client) => {
+          await deleteClient.mutateAsync(client.id)
+        }}
+        deleteConfirmTitle={(client) => `Excluir "${client.name}"?`}
+        deleteConfirmDescription={(client) =>
+          `O parceiro/cliente ${client.name} (${client.code}) será excluído definitivamente.`
+        }
         sortKey="name"
         sortDirection="asc"
       />

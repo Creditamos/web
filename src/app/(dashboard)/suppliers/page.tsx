@@ -13,7 +13,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { TablePanel } from "@/components/table-panel"
 import { TableSkeleton } from "@/components/table-skeleton"
 import type { Supplier } from "@/features/suppliers"
-import { useSuppliers } from "@/features/suppliers"
+import { useDeleteSupplier, useSuppliers } from "@/features/suppliers"
 import { applyClientTable, useClientTableState } from "@/hooks/use-client-table.hook"
 import { formatDate } from "@/lib/format"
 import { Can } from "@/lib/scopes"
@@ -65,6 +65,7 @@ const columns: DataTableColumn<Supplier>[] = [
 export default function SuppliersPage() {
   const router = useRouter()
   const { data: suppliers, isLoading, error } = useSuppliers()
+  const deleteSupplier = useDeleteSupplier()
   const { state, setSearch, toggleSort, setPage } = useClientTableState({ sortKey: "name" })
 
   const items = suppliers ?? []
@@ -136,6 +137,14 @@ export default function SuppliersPage() {
             rows={rows}
             getRowId={(supplier) => supplier.id}
             onRowClick={(supplier) => router.push(`/suppliers/${supplier.id}`)}
+            onEdit={(supplier) => router.push(`/suppliers/${supplier.id}`)}
+            onDelete={async (supplier) => {
+              await deleteSupplier.mutateAsync(supplier.id)
+            }}
+            deleteConfirmTitle={(supplier) => `Excluir fornecedor "${supplier.name}"?`}
+            deleteConfirmDescription={(supplier) =>
+              `O fornecedor ${supplier.name} (${supplier.code}) deixará de aparecer nas listas.`
+            }
             sortKey={state.sortKey}
             sortDirection={state.sortDirection}
             onSortChange={(column) => toggleSort(column.key)}

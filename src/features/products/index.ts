@@ -1,3 +1,7 @@
 export * from "./interfaces"
+export * from "./mutations/create-product.mutation"
+export * from "./mutations/delete-product.mutation"
+export * from "./mutations/update-product.mutation"
 export * from "./queries/fetch-product-by-id.query"
+export * from "./queries/fetch-product-classes.query"
 export * from "./queries/fetch-products.query"
